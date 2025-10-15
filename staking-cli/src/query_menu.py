@@ -1,5 +1,6 @@
 from argparse import Namespace
 from web3 import Web3
+from staking_sdk_py.signer_factory import Signer
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -124,7 +125,7 @@ def print_epoch(epoch_info):
     console.print(table)
 
 
-def query(config):
+def query(config: dict, signer: Signer):
     log = init_logging(config["log_level"])
     colors = config["colors"]
     while True:
@@ -136,13 +137,13 @@ def query(config):
             print_validator(validator_info, validator_id, True)
         elif choice == "2":
             w3 = Web3(Web3.HTTPProvider(config["rpc_url"]))
-            delegator_address = w3.eth.account.from_key(config["staking"]["funded_address_private_key"]).address
+            delegator_address = signer.get_address()
             validator_id = val_id_prompt(config)
             delegator_info = get_delegator_info(config, validator_id, delegator_address)
             print_delegator_info(delegator_info)
         elif choice == "3":
             w3 = Web3(Web3.HTTPProvider(config["rpc_url"]))
-            delegator_address = w3.eth.account.from_key(config["staking"]["funded_address_private_key"]).address
+            delegator_address = signer.get_address()
             address = address_prompt(config, "Enter delegator address:", default=delegator_address)
             validator_id = val_id_prompt(config)
             withdrawal_id = int(number_prompt("Enter Withdrawal ID", default="33"))
@@ -166,7 +167,7 @@ def query(config):
             print_delegators(delegators_list, validator_id)
         elif choice == "8":
             w3 = Web3(Web3.HTTPProvider(config["rpc_url"]))
-            delegator_address = w3.eth.account.from_key(config["staking"]["funded_address_private_key"]).address
+            delegator_address = signer.get_address()
             address = address_prompt(config, "Enter delegator address:", default=delegator_address)
             validator_list = get_validators_list(config, address)
             print_validator_set(config, validator_list[2], False)
@@ -180,7 +181,7 @@ def query(config):
         if  not continue_cli:
             break
 
-def query_cli(config: dict, args: Namespace):
+def query_cli(config: dict, signer: Signer, args: Namespace):
     log = init_logging(config["log_level"])
     if args.query == "validator":
         validator_id = args.validator_id
@@ -192,7 +193,7 @@ def query_cli(config: dict, args: Namespace):
             return
     elif args.query == "delegator":
         w3 = Web3(Web3.HTTPProvider(config["rpc_url"]))
-        delegator_address = w3.eth.account.from_key(config["staking"]["funded_address_private_key"]).address
+        delegator_address = signer.get_address()
         validator_id = args.validator_id
         validator_info = get_validator_info(config, validator_id)
         if validator_exists(validator_info):
