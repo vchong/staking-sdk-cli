@@ -1,0 +1,59 @@
+
+# ~/my/work/nbckp/c1/evm/monad/monad_keystore
+$ ll
+total 1.3M
+drwxrwxr-x 2 vc vc 4.0K Sep 26 19:44 .
+drwxrwxr-x 5 vc vc 4.0K Oct 16 18:26 ..
+-rw-rw-r-- 1 vc vc  430 Sep 26 18:53 bls.key
+-rwxr-xr-x 1 vc vc 1.3M Sep 26 17:56 monad-keystore
+-rw-rw-r-- 1 vc vc  441 Sep 26 18:53 plain.bls.key
+-rw-rw-r-- 1 vc vc  413 Sep 26 18:54 plain.secp.key
+-rw-rw-r-- 1 vc vc  430 Sep 26 18:54 secp.key
+
+these r dummy keys for tstg
+
+###
+
+from dataclasses import dataclass
+from typing import Dict, Any
+from staking_sdk_py.signer_factory import Signer
+
+@dataclass
+class Context:
+    config: Dict[str, Any]
+    signer: Signer
+    colors: Dict[str, str]
+
+###
+
+from src.context import Context
+# ...existing imports...
+
+class StakingCLI:
+    def __init__(self):
+        # ...existing init code...
+        self.context = None
+
+    def read_config(self, config_path):
+        # ...existing config loading...
+        self.context = Context(
+            config=self.config,
+            signer=create_signer(self.config),
+            colors=self.config["colors"]
+        )
+
+    def tui(self):
+        # Update function calls to use context
+        if choice == "6":
+            compound_rewards(self.context)
+        elif choice == "7":
+            change_validator_commission(self.context)
+        # ...etc...
+
+# Example for change_commission.py
+def change_validator_commission(context: Context):
+    # Now you can access:
+    # context.config
+    # context.signer
+    # context.colors
+    # ...rest of the code...
