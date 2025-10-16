@@ -6,6 +6,8 @@ from src.logger import init_logging
 
 def create_signer(config: dict) -> Signer:
     log = init_logging(config["log_level"].upper())
+    log.debug("create_signer")
+
     signer_type = os.environ.get("SIGNER_TYPE")
     if not signer_type:
         signer_type = config["signer"].get("type", "local").lower()
@@ -16,6 +18,7 @@ def create_signer(config: dict) -> Signer:
 
     if signer_type == "local":
         log.debug(f"Initializing local signer")
+
         private_key = os.environ.get("PRIVATE_KEY")
         if not private_key:
             private_key = config["signer"].get("private_key")
@@ -28,6 +31,7 @@ def create_signer(config: dict) -> Signer:
 
     elif signer_type == "ledger":
         log.debug(f"Initializing ledger signer")
+
         derivation_path = os.environ.get("DERIVATION_PATH")
         if not derivation_path:
             derivation_path = config["signer"].get("derivation_path", "44'/60'/0'/0/0")
