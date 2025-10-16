@@ -11,6 +11,12 @@ from rlp import encode
 from web3 import Web3
 
 
+# help(get_account_by_path)
+# print("---")
+# import inspect
+# print(inspect.signature(get_account_by_path))
+
+
 class Signer(ABC):
     """
     Abstract base class for all signers.
@@ -31,13 +37,16 @@ class LocalSigner(Signer):
     """
 
     def __init__(self, private_key: str):
+        print("LocalSigner init")
         self.private_key_hex = (
             private_key[2:] if private_key.startswith("0x") else private_key
         )
         if len(self.private_key_hex) != 64:
             raise ValueError("Private key must be 32 bytes (64 hex characters)")
+        # print("LocalSigner private_key_hex:", self.private_key_hex)
         self.account = Account.from_key(self.private_key_hex)
         self.address = Web3.to_checksum_address(self.account.address)
+        print("LocalSigner address:", self.address)
 
     def get_address(self) -> str:
         return self.address
@@ -60,15 +69,19 @@ class LedgerSigner(Signer):
 
     def __init__(self, derivation_path: str = "44'/60'/0'/0/0"):
         if derivation_path.startswith("m/"):
+            print("Stripping leading 'm/' from derivation path")
             derivation_path = derivation_path[2:]
         self.derivation_path = derivation_path
         self.ledger_account = get_account_by_path(self.derivation_path)
         self.address = Web3.to_checksum_address(self.ledger_account.address)
+        print("LedgerSigner derivation_path:", self.derivation_path)
+        print("LedgerSigner address:", self.address)
 
     def get_address(self) -> str:
         return self.address
 
     def sign_transaction(self, tx: dict) -> SignedTransaction:
+        print("Signing transaction with Ledger")
 
         # Convert tx dict to ledgereth Type2Transaction
         ledger_tx = Type2Transaction(
@@ -90,7 +103,14 @@ class LedgerSigner(Signer):
         # Convert ledgereth SignedTransaction to raw bytes and RLP encode
         raw_tx = signed.transaction_type.to_byte() + encode(signed, type(signed))
 
+        # decoded = Web3().eth.account.recover_transaction(raw_tx)
+        # print("Recovered signer address:", decoded)
+
+        print("Signing transaction with Ledger - done")
+
         # Return eth_account SignedTransaction
+        # eth_account < 0.9.0 use rawTransaction (camelCase)
+        # eth_account >= 0.9.0 use raw_transaction (snake case)
         return SignedTransaction(
             raw_transaction=raw_tx,
             hash=Web3.keccak(raw_tx),

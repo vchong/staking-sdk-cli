@@ -5,6 +5,8 @@ from staking_sdk_py.signer_factory import Signer, LocalSigner, LedgerSigner
 
 
 def create_signer(config: dict) -> Signer:
+    print("create_signer")
+
     signer_type = os.environ.get("SIGNER_TYPE")
     if not signer_type:
         signer_type = config["signer"].get("type", "local").lower()
@@ -14,6 +16,8 @@ def create_signer(config: dict) -> Signer:
         )
 
     if signer_type == "local":
+        print("local signer")
+
         private_key = os.environ.get("PRIVATE_KEY")
         if not private_key:
             private_key = config["signer"].get("private_key")
@@ -24,6 +28,8 @@ def create_signer(config: dict) -> Signer:
         return LocalSigner(private_key)
 
     elif signer_type == "ledger":
+        print("ledger signer")
+
         derivation_path = os.environ.get("DERIVATION_PATH")
         if not derivation_path:
             derivation_path = config["signer"].get("derivation_path", "44'/60'/0'/0/0")
