@@ -31,7 +31,7 @@ def send_transaction(
     # print("tx:", tx)  # verbose
 
     signed_tx = signer.sign_transaction(tx)
-    print("signed_tx (hex):", binascii.hexlify(signed_tx.raw_transaction).decode())
+    # print("signed_tx (hex):", binascii.hexlify(signed_tx.raw_transaction).decode())
     tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
 
     # Prefer the hash already on the SignedTransaction (bytes). Fallback to keccak(raw).
