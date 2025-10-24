@@ -5,7 +5,7 @@ from staking_sdk_py.signer_factory import Signer, LocalSigner, LedgerSigner
 
 
 def create_signer(config: dict) -> Signer:
-    print("create_signer")
+    # print("create_signer")
 
     signer_type = os.environ.get("SIGNER_TYPE")
     if not signer_type:

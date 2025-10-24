@@ -31,7 +31,7 @@ def send_transaction(
 
     # print("tx:", tx)
     signed_tx = signer.sign_transaction(tx)
-    print("signed_tx (hex):", binascii.hexlify(signed_tx.raw_transaction).decode())
+    # print("signed_tx (hex):", binascii.hexlify(signed_tx.raw_transaction).decode())
     tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
     # tx_hash = bytes.fromhex(
     #             "e71a993723643a51d9a978d969af88cdb3e4c0f811ecb37dce451427cda47d04"
