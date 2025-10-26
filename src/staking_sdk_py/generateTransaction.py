@@ -1,9 +1,4 @@
-import web3
 from web3 import Web3
-import staking_sdk_py.constants as constants
-
-from staking_sdk_py.keyGenerator import KeyGenerator
-from typing import Union
 
 def send_transaction(
     w3: Web3,
