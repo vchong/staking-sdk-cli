@@ -7,6 +7,10 @@ contract_address = "0x0000000000000000000000000000000000001000"
 # Log levels: debug, info, warning, error
 log_level = "info"
 
+[staking]
+# IMPORTANT: Replace with your actual private key (without 0x prefix)
+funded_address_private_key = "0xYOUR_PRIVATE_KEY_HERE"
+
 [signer]
 type = "local"
 # IMPORTANT: Replace with your actual private key (without 0x prefix)
