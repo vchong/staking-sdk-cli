@@ -21,8 +21,8 @@ from src.query import (
     get_delegator_info,
     get_withdrawal_info,
     get_delegators_list,
-    get_tx_by_hash,
     get_epoch_info,
+    get_proposer_val_id,
 )
 
 console = Console()
@@ -41,7 +41,8 @@ def print_query_menu(config):
     [{colors["primary_text"]}]7. Delegators for a Validator[/]\n
     [{colors["primary_text"]}]8. Validators for a Delegator[/]\n
     [{colors["primary_text"]}]9. Epoch Info[/]\n
-    [{colors["primary_text"]}]10. Exit[/]\n
+    [{colors["primary_text"]}]10. Proposer Validator ID[/]\n
+    [{colors["primary_text"]}]11. Exit[/]\n
     """
     menu_text = Align(menu_text, align="left")
     main_panel = Panel(
@@ -50,9 +51,9 @@ def print_query_menu(config):
         padding=(0, 10, 0, 0),
         expand=False,
     )
-    choices = [str(x) for x in range(1, 11)]
+    choices = [str(x) for x in range(1, 12)]
     console.print(main_panel)
-    choice = number_prompt("Enter a number as a choice", choices, default="10")
+    choice = number_prompt("Enter a number as a choice", choices, default="11")
 
     return choice
 
@@ -185,7 +186,16 @@ def print_epoch(epoch_info):
     table.add_row("In Epoch Delay Period", str(epoch_info[1]))
     console.print(table)
 
+    
+def print_proposer(proposer_info):
+    console = Console()
+    table = Table()
+    table.add_column("Field")
+    table.add_column("Value")
+    table.add_row("Validator ID", str(proposer_info[0]))
+    console.print(table)
 
+    
 def query(config: dict, signer: Signer):
     log = init_logging(config["log_level"])
     colors = config["colors"]
@@ -254,6 +264,9 @@ def query(config: dict, signer: Signer):
             epoch_info = get_epoch_info(config)
             print_epoch(epoch_info)
         elif choice == "10":
+            proposer_info = get_proposer_val_id(config)
+            print_proposer(proposer_info)
+        elif choice == "11":
             break
 
         continue_cli = confirmation_prompt("Continue Querying?", default=True)
@@ -327,3 +340,6 @@ def query_cli(config: dict, args: Namespace):
     elif args.query == "epoch":
         epoch_info = get_epoch_info(config)
         print_epoch(epoch_info)
+    elif args.query == "proposer-val-id":
+        proposer_info = get_proposer_val_id(config)
+        print_proposer(proposer_info)
